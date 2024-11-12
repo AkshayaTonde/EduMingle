@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block start %}
+
+<form method="post", enctype="multipart/form-data">
+    {% csrf_token %}
+    
+    {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-danger" role="alert">
+                    {{ message }}
+                </div>  
+            {% endfor %}
+    {% endif %}
+      
+    <div class="form-group">
+        <label for="name">Your Name </label>
+        <input type="text" class="form-control" id="firstname" name= "firstname" rows="3"></textarea>
+    </div>
+    <div class="form-group">
+        <label for="name">Last Name </label>
+        <input type="text" class="form-control" id="lastname" name= "lastname" rows="3"></textarea>
+    </div>
+    <div class="form-group">
+        <label for="name">User Name </label>
+        <input type="text" class="form-control" id="username" name= "username" rows="3"></textarea>
+    </div>
+    <div class="form-group">
+        <label for="name">Password </label>
+        <input type="password" class="form-control" id="Password" name= "Password" rows="3"></textarea>
+    </div>
+    <div class="form-group">
+          <label for="Email1">Email address</label>
+          <input type="email" class="form-control" name ="email" id="Esmail1" aria-describedby="emailHelp" placeholder="Enter email">
+    </div>
+   
+    <div class="form-group">
+        <label for="exampleFormControlFile1">Upload Profile Picture</label>
+        <input type="file" name ="profilepic"class="form-control-file" id="exampleFormControlFile1">
+      </div>
+    <button type="submit" class="btn btn-primary">Sign Up</button>
+
+    <p>Already have an account? Please click on <a href="/login">Login</a></p>
+</form>
+  {% endblock %}
