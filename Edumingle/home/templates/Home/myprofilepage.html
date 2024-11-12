@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block start %}
+<h1> My Profile</h1>
+
+<h1>Welcome, {{ user.username }}</h1>
+<p>Email: {{ user.email }}</p>
+
+{% if student %}
+    <p>Phone: {{ student.phone }}</p>
+    <p>Bio: {{ student.user_bio }}</p>
+    <img src="/media/{{student.profilepicture}}" alt="Profile Picture">
+{% else %}
+    <p>No student profile found.</p>
+{% endif %}
+
+
+{% endblock %}

@@ -25,6 +25,7 @@ from django.urls import path
 
 urlpatterns = [
     path ('',home, name ="home"),
+    path ('myprofile/',myprofilepage , name ="myprofilepage"),
     path ('contacts/',contactUs, name ="contact"), # uri , function name, name to track
     path ('friends/',friends, name ="friends"),
     path ('signup/',signUp, name ="signup"),

@@ -23,6 +23,8 @@ def signUp(request):
         last_name = data.get('lastname')
         email = data.get('email')
         username=data.get("username")
+        phone = data.get("phone")
+        profilepic = request.FILES.get("profilepic")
 
 
         print("We get data =",data)
@@ -40,6 +42,12 @@ def signUp(request):
             )
             user.set_password(data.get("Password"))
             user.save()
+
+            # Create the Student profile linked to the user
+            Student.objects.create(user=user,
+                                   phone = phone,
+                                   profilepicture= profilepic)
+
             messages.success(request, "Account Created Successfully!")
             return redirect ("/login")
         
@@ -61,6 +69,7 @@ def login_page(request):
 
     
     if request.method == "POST":
+        
         username = request.POST.get("username")
         password = request.POST.get("password")
         
@@ -72,7 +81,10 @@ def login_page(request):
             print("user authenticated successfully")
             login(request, user)
             messages.success(request, "Login successful!")
-            return redirect("/")  # redirect to the desired page after login
+
+            # Redirect to profile page without passing user and student objects
+            return redirect('myprofilepage')
+            
         else:
             print("Invalid username or password")
             messages.error(request, "Invalid username or password.")
@@ -80,6 +92,44 @@ def login_page(request):
     # Get request
     else:
         return render(request, "Home/login.html")
+
+
+# views.py
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from .forms import UserProfileForm, StudentProfileForm
+from .models import Student
+
+@login_required
+def myprofilepage(request):
+    user = request.user  # Get the logged-in user
+
+    # Get or create the associated Student profile
+    student, created = Student.objects.get_or_create(user=user)
+
+    if request.method == 'POST':
+        user_form = UserProfileForm(request.POST, instance=user)
+        student_form = StudentProfileForm(request.POST, request.FILES, instance=student)
+        
+        if user_form.is_valid() and student_form.is_valid():
+            user_form.save()
+            student_form.save()
+            messages.success(request, "Profile updated successfully!")
+            return redirect('myprofilepage')  # Redirect to avoid form resubmission
+        else:
+            messages.error(request, "Please correct the errors below.")
+    else:
+        user_form = UserProfileForm(instance=user)
+        student_form = StudentProfileForm(instance=student)
+
+    return render(request, 'Home/myprofilepage.html', {
+        'user_form': user_form,
+        'student_form': student_form,
+        'user': user,
+        'student': student,
+    })
+
 
 
 def register(request):
