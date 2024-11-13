@@ -5,6 +5,24 @@ from django.contrib import messages
 from .models import *
 from datetime import date
 from django.contrib.auth import *
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from .forms import UserProfileForm, StudentProfileForm
+from .models import Student
+from django.contrib.auth import logout
+
+
+from django.shortcuts import redirect
+
+def logout_required(view_func):
+    def wrapper(request, *args, **kwargs):
+        if request.user.is_authenticated:
+            return redirect('dashboard')  # Redirect logged-in users to dashboard or another page
+        return view_func(request, *args, **kwargs)
+    return wrapper
+
 
 # Create your views here.
 def home(request):
@@ -13,6 +31,7 @@ def home(request):
 def friends(request):
     return render(request, "Home/Friends.html")
 
+@logout_required
 def signUp(request):
     
     #When data is saved 
@@ -55,19 +74,16 @@ def signUp(request):
     if request.method =="GET":
         return render(request, "Home/signUp.html")
     
-
-
 def contactUs(request):
     return render(request, "Home/Contact.html")
 
 def viewAllStudents(request):
     
-    return render(request, "Home/allStudents.html", context=context)
+    return render(request, "Home/allStudents.html")
 
 
 def login_page(request):
 
-    
     if request.method == "POST":
         
         username = request.POST.get("username")
@@ -94,12 +110,6 @@ def login_page(request):
         return render(request, "Home/login.html")
 
 
-# views.py
-from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, redirect
-from django.contrib import messages
-from .forms import UserProfileForm, StudentProfileForm
-from .models import Student
 
 @login_required
 def myprofilepage(request):
@@ -131,9 +141,6 @@ def myprofilepage(request):
     })
 
 
-
-def register(request):
-    return render(request, "Home/register.html")
 
 def delete_all(request):
     Student.objects.all().delete()
